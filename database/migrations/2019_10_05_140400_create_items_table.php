@@ -16,13 +16,13 @@ class CreateItemsTable extends Migration
         Schema::create('items', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('description');
-            $table->boolean('is_complated');
-            $table->dateTime('completed_at');
-            $table->dateTime('due');
-            $table->smallInteger('urgency');
-            $table->integer('updated_by');
-            $table->integer('assignee_by');
-            $table->integer('task_by');
+            $table->boolean('is_complated')->default(0);
+            $table->dateTime('completed_at')->nullable();
+            $table->dateTime('due')->nullable();
+            $table->smallInteger('urgency')->nullable();
+            $table->integer('updated_by')->nullable();
+            $table->integer('assignee_by')->nullable();
+            $table->integer('task_id')->nullable();
             $table->timestamps();
         });
     }
