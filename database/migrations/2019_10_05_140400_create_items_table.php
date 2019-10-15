@@ -17,13 +17,16 @@ class CreateItemsTable extends Migration
             $table->bigIncrements('id');
             $table->string('description');
             $table->boolean('is_complated')->default(0);
-            $table->dateTime('completed_at')->nullable();
-            $table->dateTime('due')->nullable();
+            $table->timestamp('completed_at')->default(DB::raw('NULL'))->nullable();
+            $table->timestamp('due')->default(DB::raw('NULL'))->nullable();
             $table->smallInteger('urgency')->nullable();
             $table->integer('updated_by')->nullable();
             $table->integer('assignee_by')->nullable();
-            $table->integer('task_id')->nullable();
+            $table->unsignedInteger('task_id')->nullable();
             $table->timestamps();
+
+            $table->foreign('task_id')->references('id')->on('templates')->onDelete('cascade');
+
         });
     }
 

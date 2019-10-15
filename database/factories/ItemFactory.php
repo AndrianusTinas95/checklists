@@ -13,7 +13,7 @@
 
 $factory->define(App\Item::class, function (Faker\Generator $faker) {
     return [
-        'description'   => $faker->paragraph(),
+        'description'   => $faker->paragraph(1),
         'is_complated'  => rand(0,1),
         'completed_at'  => $faker->dateTime(),
         'due'           => $faker->dateTime(),

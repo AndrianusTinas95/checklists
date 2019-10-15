@@ -11,7 +11,7 @@
 |
 */
 
-$factory->define(App\User::class, function (Faker\Generator $faker) {
+$factory->define(App\Template::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->sentence(4),
     ];
