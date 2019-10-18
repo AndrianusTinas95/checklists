@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Checklist;
 use App\Helpers\Carbon;
 use App\Item;
+use App\Resources\Item\ChecklistItemResource;
+use App\Resources\Item\ChecklistItemStoreResource;
 use App\Resources\Template\TemplateCollection;
 use App\Resources\Template\TemplateResource;
 use App\Template;
+use DateTime;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -87,18 +90,11 @@ class TemplateController extends Controller
             $template = Template::with('checklist','items')->findOrFail($id);
 
             /**
-             * custom data 
+             * response single data
              */
-            $data = [
-                'data' => [
-                    'type'          => 'templates',
-                    'id'            => $template->id,
-                    'attributes'    => new TemplateResource($template),
-                    'links'         =>[
-                        'self'  => $request->fullUrl()
-                    ] 
-                ]
-            ];
+            $resource = new TemplateResource($template);
+            $data = $this->single('templates',$id,$resource,$request->fullUrl());
+
             $status = 200;
 
         } catch (Exception $e) {
@@ -253,43 +249,10 @@ class TemplateController extends Controller
 
 
     public function tes(){
-        /**
-         * template data
-         */
-        $template = factory(Template::class)->make()->only('name');
-
-        $unit = ['minute','hour','day','week','mounth'];
-        
-        /**
-         * checklist data
-         */
-        $checklist = factory(Checklist::class)->make([
-            'due_interval'=> rand(1,10),'due_unit'=>$unit[rand(0,4)]
-        ])->only('description','due_interval','due_unit');
-        
-        /**
-         * item data
-         */
-        $items = factory(Item::class,rand(1,3))->make([
-            'due_interval'=> rand(1,10),'due_unit'=>$unit[rand(0,4)]
-        ]);
-        $items = $items->map(function($item){
-            return[
-                'due_interval' => $item['due_interval'],
-                'due_unit' => $item['due_unit'],
-                'urgency' => $item['urgency'],
-                'description' => $item['description']
-            ];
-        })->toArray();
-
-        /**
-         * all data
-         */
-        $data['name']=$template['name'];
-        $data['checklist']=$checklist;
-        $data['items']= $items;
-        
-        dd($data);
-        return $template;
+        $checklist = Checklist::with('template.items')->get()->random();
+        dump($checklist->id);
+        dump($checklist->template->items->random()->id);
+        // dd($data);
+        return $checklist;     
     }
 }

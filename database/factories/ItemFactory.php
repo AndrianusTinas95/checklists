@@ -14,12 +14,12 @@
 $factory->define(App\Item::class, function (Faker\Generator $faker) {
     return [
         'description'   => $faker->paragraph(1),
-        'is_complated'  => rand(0,1),
+        'is_completed'  => rand(0,1),
         'completed_at'  => $faker->dateTime(),
         'due'           => $faker->dateTime(),
         'urgency'       => rand(1,5),
         'updated_by'    => $faker->randomDigit,
-        'assignee_by'   => $faker->randomDigit,
+        'assignee_id'   => $faker->randomDigit,
         'task_id'       => $faker->randomDigit,
     ];
 });

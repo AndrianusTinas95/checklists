@@ -17,7 +17,7 @@ class CreateChecklistsTable extends Migration
             $table->bigIncrements('id');
             $table->string('domain')->nullable();
             $table->string('description');
-            $table->boolean('is_complated')->default(0);
+            $table->boolean('is_completed')->default(0);
             $table->timestamp('completed_at')->default(DB::raw('NULL'))->nullable();
             $table->integer('updated_by')->nullable();
             $table->timestamp('due')->default(DB::raw('NULL'))->nullable();

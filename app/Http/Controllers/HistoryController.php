@@ -14,5 +14,17 @@ class HistoryController extends Controller
         //
     }
 
-    //
+    /**
+     * get list of hisory
+     */
+    public function list(){
+
+    }
+
+    /**
+     * get history by id
+     */
+    public function show($historyId){
+
+    }
 }

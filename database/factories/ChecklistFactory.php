@@ -17,7 +17,7 @@ $factory->define(App\Checklist::class, function (Faker\Generator $faker) {
     return [
         'domain'        => $faker->word,
         'description'   => $faker->sentence(1),
-        'is_complated'  => rand(0,1),
+        'is_completed'  => rand(0,1),
         'completed_at'  => $faker->dateTime(),
         'updated_by'    => $faker->randomDigit,
         'due'           => $faker->dateTime(),

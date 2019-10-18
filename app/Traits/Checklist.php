@@ -2,5 +2,5 @@
 namespace App\Traits;
 
 trait Checklist{
-    use Validate;
+    use Validate,Response;
 }
