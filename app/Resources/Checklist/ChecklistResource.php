@@ -26,7 +26,7 @@ class ChecklistResource extends JsonResource
                     'urgency'           => $this->urgency,
                     'completed_at'      => $this->completed_at,
                     'last_update_by'    => $this->updated_by,
-                    'update_at'         => $this->update_at,
+                    'updated_at'        => $this->updated_at,
                     'created_at'        => $this->created_at,
                 ],
                 'links'         =>[
