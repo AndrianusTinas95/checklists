@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Checklist;
+use App\Item;
 use App\Resources\Checklist\ChecklistCollection;
 use App\Resources\Checklist\ChecklistResource;
 use Exception;
-use Laravel\Lumen\Http\Request;
+use Illuminate\Http\Request;
 
 class ChecklistController extends Controller
 {
@@ -60,21 +61,38 @@ class ChecklistController extends Controller
             /**
              * validate 
              */
+            $this->validate($request,[
+                'object_domain'     => 'required|string|max:100',
+                'object_id'         => 'required|exists:templates,id',
+                'description'       => 'required|string|max:200',
+                'is_completed'      => 'nullable|boolean',
+                'completed_at'      => 'nullable|date_format:Y-m-d H:i:s',
+                'created_at'        => 'nullable|date_format:Y-m-d H:i:s',
+            ]);
 
             /**
              * get checklist by id
              */
-            $checklist = Checklist::findOrFail($id);
+            $checklist = Checklist::find($id);
+            if(!$checklist) return $this->resp('error','Not Found',400);
 
             /**
              * update checklist
              */
 
-        } catch (\Throwable $th) {
-            //throw $th;
-        }finally{
-
+             $checklist->update($request->all());
+            /**
+             * data 
+             */
+            $data['data']   = new ChecklistResource($checklist);
+            $status = 200;
+        } catch (Exception $e) {
+            $type   = 'error'; 
+            $data   = $e->getMessage();
+            $status = 200;
         }
+
+        return $this->resp($type ?? null, $data, $status);
     }
 
     /**
@@ -86,7 +104,7 @@ class ChecklistController extends Controller
              * get checklist by id
              */
             $checklist = Checklist::findOrFail($id);
-
+            return $this->resp('error','Not Found',400);
             /**
              * delete checklist
              */
@@ -115,16 +133,39 @@ class ChecklistController extends Controller
      */
     public function store(Request $request){
         /**
-         * validate
+         * validate 
          */
+        $this->validate($request,[
+            'object_domain'     => 'required|string|max:100',
+            'object_id'         => 'required|exists:templates,id',
+            'due'               => 'nullable|date_format:Y-m-d H:i:s',
+            'urgency'           => 'required|numeric',
+            'description'       => 'required|string|max:200',
+            'items'             => 'nullable|array',
+            'items.*'           => 'nullable|string|max:100',
+            'task_id'           => 'required|exists:templates,id'
+        ]);
 
         /**
          * save data to database 
          */
+        $checklist = Checklist::create($request->except('items','task_id'));
+        /**
+         * save items
+         */
+        if($request->input('items')){
+            foreach ($request->input('items') as $input) {
+                $item['description'] = $input;
+                $checklist->template->items()->save(new Item($item));
+            }
+        }
 
         /**
-         * response data
+         * response single data
          */
+        $data['data'] = new ChecklistResource($checklist);
+
+        return $this->resp(null,$data,201);
     }
 
     /**

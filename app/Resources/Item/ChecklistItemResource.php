@@ -16,7 +16,7 @@ class ChecklistItemResource extends JsonResource
     {
 
         return [
-            'type'          => 'item',
+            'type'          => 'items',
             'id'            => (int)$this->id,
             'attributes'    => [
                 'description'       => $this->description,

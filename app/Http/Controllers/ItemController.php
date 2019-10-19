@@ -8,6 +8,7 @@ use App\Resources\Item\ChecklistItemResource;
 use App\Resources\Item\ChecklistItemStoreResource;
 use App\Resources\Item\CompleteItemChecklistResource;
 use App\Resources\Item\ItemChecklistResource;
+use App\Resources\Item\ItemCollection;
 use Illuminate\Http\Request;
 
 class ItemController extends Controller
@@ -250,8 +251,20 @@ class ItemController extends Controller
     /**
      * This endpoint will get all available items.
      */
-    public function items(){
-
+    public function itemsList(Request $request){
+        /**
+         * get items limit 
+         */
+        $items = Item::paginate($request->page['limit'] ?? 10);
+        /**
+         * collection items
+         */
+        $data=new ItemCollection($items);
+        
+        /**
+         * response
+         */
+        return $this->resp(null,$data,200);
     }
 
     /**

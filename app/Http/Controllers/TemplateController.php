@@ -249,10 +249,25 @@ class TemplateController extends Controller
 
 
     public function tes(){
-        $checklist = Checklist::with('template.items')->get()->random();
-        dump($checklist->id);
-        dump($checklist->template->items->random()->id);
-        // dd($data);
+     
+        $checklist = factory(Checklist::class)->make([
+            'task_id'=>function(){
+                return Template::get()->random()->id;
+            },
+            'items' => function() {
+                for ($i=0; $i < rand(1,5); $i++) { 
+                    $items[] = uniqid("tes - $i - ");
+                }
+                return $items;
+            }
+        ])
+        ->only(
+            'object_domain','object_id','due','urgency','description','items','task_id'
+        );
+
+        $date = new DateTime();
+        $due = $date->format('Y-m-d H:i:s');
+        $checklist['due']=$due;
         return $checklist;     
     }
 }

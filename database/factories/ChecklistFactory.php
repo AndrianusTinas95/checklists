@@ -15,7 +15,7 @@ use Carbon\Carbon;
 
 $factory->define(App\Checklist::class, function (Faker\Generator $faker) {
     return [
-        'domain'        => $faker->word,
+        'object_domain' => $faker->word,
         'description'   => $faker->sentence(1),
         'is_completed'  => rand(0,1),
         'completed_at'  => $faker->dateTime(),

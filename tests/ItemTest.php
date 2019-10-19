@@ -221,6 +221,48 @@ class ItemTest extends TestCase
 
     }
 
+    public function testItemsList(){
+        $this->get('checklists/items',[]);
+        $this->seeStatusCode(200);
+        $this->seeJsonStructure([
+            'data'  =>[
+                '*'  =>[
+                    "type",
+                    "id",
+                    "attributes"=> [
+                        "description",
+                        "is_completed",
+                        "completed_at",
+                        "due",
+                        "urgency",
+                        "updated_by",
+                        "created_by",
+                        "checklist_id",
+                        "assignee_id",
+                        "task_id",
+                        "deleted_at",
+                        "update_at",
+                        "created_at",
+                    ],
+                    "links"=>[
+                        "self"
+                    ]
+                ]
+            ],
+            'meta' => [
+                'count',
+                'total'
+            ],
+            'links' => [
+                'first',
+                'last',
+                'next',
+                'prev'
+            ]
+           
+        ]);
+    }
+
 
 
 }

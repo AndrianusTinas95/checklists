@@ -18,7 +18,7 @@ class ChecklistResource extends JsonResource
                 'type'          => 'checklist',
                 'id'            => (int)$this->id,
                 'attributes'    => [
-                    'object_domain'     => $this->template->name,
+                    'object_domain'     => $this->object_domain,
                     'object_id'         => (string)$this->object_id,
                     'description'       => $this->description,
                     'is_completed'      => (bool)$this->is_completed,

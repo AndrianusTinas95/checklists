@@ -48,7 +48,7 @@ $router->group(['prefix'=>'checklists'],function($router){
     $router->delete('/{checklistId}/items/{itemId}','ItemController@destroyChecklistItem');
     $router->post('{checklistId}/items/_bulk','ItemController@bulk');
     $router->get('/items/summaries','ItemController@summaries');
-    $router->get('/items','ItemController@items');
+    $router->get('/items','ItemController@itemsList');
 
     /**
      * CHECKLISTS
