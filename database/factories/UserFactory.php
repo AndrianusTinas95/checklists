@@ -15,7 +15,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
     return [
         'name'      => $faker->name,
         'email'     => $faker->email,
-        'password'  => '$2y$12$T87mz2ryZRYUJ1xvaBVx3eRbojPv.Ww8E0mcxPNO7Fk3MNrfAgIU',//rahasia,
+        'password'  => '$2y$12$ReZfhJ7rvwCzfQbTAvGI6Or2nGDqKO5UiWw0owk.F78OY9.NbQQb6',//rahasia,
         'api_token' => '$2y$12$T87mz2ryZRYUJ1xvaBVx3eRbojPv.Ww8E0mcxPNO7Fk3MNrfAgIU',
     ];
 });

@@ -17,6 +17,9 @@ $router->get('/', function () use ($router) {
 
 $router->get('/tes','TemplateController@tes');
 
+$router->post('/login','AuthController@login');
+$router->post('/register','AuthController@register');
+
 $router->group(['prefix'=>'checklists'],function($router){
     /**
      * TEMPLATES

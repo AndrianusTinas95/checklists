@@ -10,6 +10,7 @@ use App\Resources\Item\ChecklistItemStoreResource;
 use App\Resources\Template\TemplateCollection;
 use App\Resources\Template\TemplateResource;
 use App\Template;
+use App\User;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
@@ -250,24 +251,9 @@ class TemplateController extends Controller
 
     public function tes(){
      
-        $checklist = factory(Checklist::class)->make([
-            'task_id'=>function(){
-                return Template::get()->random()->id;
-            },
-            'items' => function() {
-                for ($i=0; $i < rand(1,5); $i++) { 
-                    $items[] = uniqid("tes - $i - ");
-                }
-                return $items;
-            }
-        ])
-        ->only(
-            'object_domain','object_id','due','urgency','description','items','task_id'
-        );
-
-        $date = new DateTime();
-        $due = $date->format('Y-m-d H:i:s');
-        $checklist['due']=$due;
-        return $checklist;     
+        $user = factory(User::class)->make()->toArray();
+        $user['password']='rahasia';
+        $user['password_confirm']='rahasia';
+        return $user;     
     }
 }
