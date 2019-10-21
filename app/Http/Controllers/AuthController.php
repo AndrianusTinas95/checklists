@@ -57,7 +57,7 @@ class AuthController extends Controller
          */
         $data = [
             'message'     => 'susscess',
-            'Token'       => 'Barer '.$apiToken
+            'Token'       => 'Bearer '.$apiToken
         ];
 
         /**
@@ -102,7 +102,7 @@ class AuthController extends Controller
          */
         $data = [
             'message'     => 'Register Success',
-            'Token'       => 'Barer '.$apiToken
+            'Token'       => 'Bearer '.$apiToken
         ];
 
          /**

@@ -15,7 +15,7 @@ class TemplateTest extends TestCase
      */
     public function testTemplateList()
     {
-        $this->get('/checklists/templates',[]);
+        $this->get('/checklists/templates',$this->header());
         $this->seeStatusCode(200);
         $this->seeJsonStructure([
             'data'  =>[
@@ -51,14 +51,14 @@ class TemplateTest extends TestCase
 
     public function testTemplateStore(){
         $data= $this->dataTemplate();
-        $this->post('/checklists/templates',$data,[]);
+        $this->post('/checklists/templates',$data,$this->header());
         $this->seeStatusCode(201);
         $this->addTemplateJson();
     }
 
     public function testTemplateShow(){
         $id = Template::get()->random()->id;
-        $this->get('/checklists/templates/'.$id,[]);
+        $this->get('/checklists/templates/'.$id,$this->header());
         $this->seeStatusCode(200);
         $this->seeJsonStructure([
             "data"=> [
@@ -90,7 +90,7 @@ class TemplateTest extends TestCase
     public function testTemplateUpdate(){
         $id = Template::get()->random()->id;
         $data = $this->dataTemplate();
-        $this->patch('/checklists/templates/'.$id,$data,[]);
+        $this->patch('/checklists/templates/'.$id,$data,$this->header());
         $this->seeStatusCode(200);
         $this->addTemplateJson();
     }
@@ -98,7 +98,7 @@ class TemplateTest extends TestCase
     public function testTemplateDestroy(){
         // $id = 51;
         $id = Template::get()->random()->id;
-        $this->delete('/checklists/templates/'.$id,[],[]);
+        $this->delete('/checklists/templates/'.$id,[],$this->header());
         $this->seeStatusCode(204);
 
     }

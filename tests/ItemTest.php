@@ -13,11 +13,12 @@ class ItemTest extends TestCase
      * Complete item(s) 
      */
     public function testItemComplete(){
-        $data['data'] = Item::get()->random(rand(1,5))->pluck('id')->map(function($item){
+        $items=Item::where('is_completed',true)->get();
+        $data['data'] = $items->random(rand(0,$items->count()))->pluck('id')->map(function($item){
             return ['item_id' => $item];
         })->toArray();
 
-        $this->post('/checklists/complete',$data,[]);
+        $this->post('/checklists/complete',$data,$this->header());
         $this->seeStatusCode(200);
         $this->seeJsonStructure([
             "data"=> [
@@ -35,11 +36,12 @@ class ItemTest extends TestCase
      * Incomplete item(s)
      */
     public function testItemIncomplete(){
-        $data['data'] = Item::get()->random(rand(1,5))->pluck('id')->map(function($item){
+        $items=Item::where('is_completed',false)->get();
+        $data['data'] = $items->random(rand(0,$items->count()))->pluck('id')->map(function($item){
             return ['item_id' => $item];
         })->toArray();
 
-        $this->post('/checklists/incomplete',$data,[]);
+        $this->post('/checklists/incomplete',$data,$this->header());
         $this->seeStatusCode(200);
         $this->seeJsonStructure([
             "data"=> [
@@ -59,7 +61,7 @@ class ItemTest extends TestCase
     public function testItemChecklistGetItem()
     {
         $id = Checklist::pluck('id')->random();
-        $this->get('/checklists'.'/'.$id.'/items',[]);
+        $this->get('/checklists'.'/'.$id.'/items',$this->header());
 
         $this->seeStatusCode(200);
         $this->seeJsonStructure([
@@ -106,15 +108,20 @@ class ItemTest extends TestCase
      * Create item by given checklistId
      */
     public function testItemChecklistStoreItem(){
-        $data = factory(Item::class)->make(['due'=>function(){
-            $date = new DateTime();
-            return $date->format('Y-m-d H:i:s');
-        }])->only(
+        $data = factory(Item::class)->make([
+            'assignee_id'=>function(){
+                return Template::get()->random()->id;
+            },
+            'due'=>function(){
+                $date = new DateTime();
+                return $date->format('Y-m-d H:i:s');
+             }
+        ])->only(
             'description','due','urgency','assignee_id'
         );
 
         $id = Checklist::pluck('id')->random();
-        $this->post('/checklists'.'/'.$id.'/items',$data,[]);
+        $this->post('/checklists'.'/'.$id.'/items',$data,$this->header());
         $this->seeStatusCode(201);
         $this->seeJsonStructure([
             'data'  =>[
@@ -142,10 +149,10 @@ class ItemTest extends TestCase
      * Get checklist item by given {checklistId} and {itemId}
      */
     public function testGetChecklistItem(){
-        $checklist = Checklist::with('template.items')->get()->random();
+        $checklist = Checklist::has('template.items')->get()->random();
         $checklistId= $checklist->id;
         $itemId =$checklist->template->items[0]['id'];
-        $this->get('checklists/'.$checklistId.'/items'.'/'.$itemId,[]);
+        $this->get('checklists/'.$checklistId.'/items'.'/'.$itemId,$this->header());
         $this->seeStatusCode(200);
         $this->seeJsonStructure([
             'data'  =>[
@@ -174,17 +181,24 @@ class ItemTest extends TestCase
     }
 
     public function testUpdateChecklistItem(){
-        $data = factory(Item::class)->make(['due'=>function(){
-            $date = new DateTime();
-            return $date->format('Y-m-d H:i:s');
-        }])->only(
+        $checklist = Checklist::has('template.items')->get()->random();
+        $checklistId= $checklist->id;
+        $template =$checklist->template;
+        $itemId =$checklist->template->items[0]['id'];
+
+        $data = factory(Item::class)->make([
+            'assignee_id'=>function() use($template){
+                return $template->id;
+            },
+            'due'=>function(){
+                $date = new DateTime();
+                return $date->format('Y-m-d H:i:s');
+            }
+        ])->only(
             'description','due','urgency','assignee_id'
         );
-
-        $checklist = Checklist::with('template.items')->get()->random();
-        $checklistId= $checklist->id;
-        $itemId =$checklist->template->items[0]['id'];
-        $this->patch('checklists/'.$checklistId.'/items'.'/'.$itemId,$data,[]);
+        
+        $this->patch('checklists/'.$checklistId.'/items'.'/'.$itemId,$data,$this->header());
         $this->seeStatusCode(200);
         $this->seeJsonStructure([
             'data'  =>[
@@ -213,16 +227,16 @@ class ItemTest extends TestCase
     }
 
     public function testdestroyChecklistItem(){
-        $checklist = Checklist::with('template.items')->get()->random();
+        $checklist = Checklist::has('template.items')->get()->random();
         $checklistId= $checklist->id;
         $itemId = $checklist->template->items->random()->id;
-        $this->delete('checklists/'.$checklistId.'/items'.'/'.$itemId,[],[]);
+        $this->delete('checklists/'.$checklistId.'/items'.'/'.$itemId,[],$this->header());
         $this->seeStatusCode(204);
 
     }
 
     public function testItemsList(){
-        $this->get('checklists/items',[]);
+        $this->get('checklists/items',$this->header());
         $this->seeStatusCode(200);
         $this->seeJsonStructure([
             'data'  =>[

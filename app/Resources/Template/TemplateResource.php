@@ -15,14 +15,13 @@ class TemplateResource extends JsonResource
      */
     public function toArray($request)
     {
-        $time = Carbon::chDue($this->checklist->due);
-
+        $time = $this->checklist ? Carbon::chDue($this->checklist->due) : null;
         return [
             'name'              => $this->name,
             'checklist'         => [
-                'description'   => $this->checklist->description,
-                'due_interval'  => $time['interval'] ?? '',
-                'due_unit'      => $time['unit'] ?? ''
+                'description'   => $this->checklist->description ?? null,
+                'due_interval'  => $time && $time['interval'] ? $time['interval'] : '',
+                'due_unit'      => $time && $time['unit'] ? $time['unit'] : ''
             ],
             'items'             => $this->relationItems($this->items),
         ];

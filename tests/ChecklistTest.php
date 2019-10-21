@@ -9,12 +9,13 @@ use Laravel\Lumen\Testing\DatabaseTransactions;
 class ChecklistTest extends TestCase
 {
 
+
     /**
      * Get checklist by given checklistId. 
      */
     public function testChecklistShow(){
         $id = Checklist::get()->random()->id;
-        $this->get('/checklists/'.$id,[]);
+        $this->get('/checklists/'.$id,$this->header());
         $this->seeStatusCode(200);
         $this->seeJsonStructure([
             "data"=> [
@@ -29,7 +30,7 @@ class ChecklistTest extends TestCase
                     "urgency",
                     "completed_at",
                     "last_update_by",
-                    "update_at",
+                    "updated_at",
                     "created_at",
                 ],
                 "links"=>[
@@ -44,7 +45,7 @@ class ChecklistTest extends TestCase
      */
     public function testChecklistList()
     {
-        $this->get('/checklists',[]);
+        $this->get('/checklists',$this->header());
         $this->seeStatusCode(200);
         $this->seeJsonStructure([
             'data'  =>[
@@ -60,7 +61,7 @@ class ChecklistTest extends TestCase
                         "urgency",
                         "completed_at",
                         "last_update_by",
-                        "update_at",
+                        "updated_at",
                         "created_at",
                     ],
                     "links"=>[
@@ -83,6 +84,9 @@ class ChecklistTest extends TestCase
 
     public function testChecklistStore(){
         $data = factory(Checklist::class)->make([
+            'object_id'=>function() {
+                return Template::get()->random()->id;
+            },
             'task_id'=>function(){
                 return Template::get()->random()->id;
             },
@@ -99,7 +103,7 @@ class ChecklistTest extends TestCase
         $due = $date->format('Y-m-d H:i:s');
         $data['due']=$due;
 
-        $this->post('/checklists',$data,[]);
+        $this->post('/checklists',$data,$this->header());
         $this->seeStatusCode(201);
         $this->seeJsonStructure([
             "data"=> [
@@ -114,7 +118,7 @@ class ChecklistTest extends TestCase
                     "urgency",
                     "completed_at",
                     "last_update_by",
-                    "update_at",
+                    "updated_at",
                     "created_at",
                 ],
                 "links"=>[
@@ -131,12 +135,15 @@ class ChecklistTest extends TestCase
         $data = factory(Checklist::class)->make([
             'created_at'=>function() use($checklist){
                 return $checklist->created_at;
+            },
+            'object_id'=>function() use($checklist){
+                return $checklist->object_id;
             }
         ])->only(
             'object_domain','object_id','is_completed','description'
         );
-        
-        $this->patch('/checklists'.'/'.$checklist->id,$data,[]);
+
+        $this->patch('/checklists'.'/'.$checklist->id,$data,$this->header());
         $this->seeStatusCode(200);
         $this->seeJsonStructure([
             "data"=> [
@@ -151,7 +158,7 @@ class ChecklistTest extends TestCase
                     "urgency",
                     "completed_at",
                     "last_update_by",
-                    "update_at",
+                    "updated_at",
                     "created_at",
                 ],
                 "links"=>[
@@ -162,10 +169,10 @@ class ChecklistTest extends TestCase
     }
 
     public function testChecklistDestroy(){
-        // $id = 51;
-        // $id = Template::get()->random()->id;
-        // $this->delete('/checklists/'.$id,[],[]);
-        // $this->seeStatusCode(204);
+        // $id = 94;
+        $id = Checklist::get()->random()->id;
+        $this->delete('/checklists'.'/'.$id,[],$this->header());
+        $this->seeStatusCode(204);
 
     }
 

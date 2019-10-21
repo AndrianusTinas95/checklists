@@ -18,7 +18,7 @@ class CompleteItemChecklistResource extends JsonResource
             'id'            => (int)$this->id,
             'item_id'       => (int)$this->id,
             'is_completed'  => (bool)$this->is_completed,
-            'checklist_id'  => (string)$this->template->checklist->id,
+            'checklist_id'  => (string) $this->template->checklist ? $this->template->checklist->id:null,
         ];
     }
 }

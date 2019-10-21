@@ -24,7 +24,7 @@ class AuthTest extends TestCase
             'message',
             'Token'
         ]);
-       
+
     }
 
     public function testRegister(){

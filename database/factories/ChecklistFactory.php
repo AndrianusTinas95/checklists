@@ -22,6 +22,6 @@ $factory->define(App\Checklist::class, function (Faker\Generator $faker) {
         'updated_by'    => $faker->randomDigit,
         'due'           => $faker->dateTime(),
         'urgency'       => rand(1,5),
-        'object_id'     => $faker->randomDigit
+        // 'object_id'     => $faker->randomDigit
     ];
 });

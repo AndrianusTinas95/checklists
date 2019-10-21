@@ -12,7 +12,7 @@ class HistoryTest extends TestCase
      */
     public function testHistoriesShow(){
         $id = History::get()->random()->id;
-        $this->get('/checklists/histories/'.$id,[]);
+        $this->get('/checklists/histories/'.$id,$this->header());
         $this->seeStatusCode(200);
         $this->seeJsonStructure([
             "data"=> [
@@ -39,7 +39,7 @@ class HistoryTest extends TestCase
      */
     public function testHistoriesList()
     {
-        $this->get('/checklists/histories',[]);
+        $this->get('/checklists/histories',$this->header());
         $this->seeStatusCode(200);
         $this->seeJsonStructure([
             'data'  =>[

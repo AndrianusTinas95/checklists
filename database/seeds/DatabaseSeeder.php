@@ -20,7 +20,9 @@ class DatabaseSeeder extends Seeder
         factory(User::class,10)->create();
         factory(Template::class,50)->create()->each(function($temp){
             $temp->checklist()->save(factory(Checklist::class)->make());
-            $temp->items()->saveMany(factory(Item::class,rand(1,5))->make());
+            $temp->items()->saveMany(factory(Item::class,rand(1,5))->make([
+                'assignee_id'   => $temp->id
+            ]));
         });
         factory(History::class,200)->create();
     }

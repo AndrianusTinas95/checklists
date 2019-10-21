@@ -291,8 +291,8 @@ class ItemController extends Controller
          * validate
          */
         $this->validate($request,[
-            'data'              => 'required|array',
-            'data.*.item_id'    => 'required|exists:items,id'
+            'data'              => 'nullable|array',
+            'data.*.item_id'    => 'nullable|exists:items,id'
         ]);
 
         /**

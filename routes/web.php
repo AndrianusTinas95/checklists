@@ -20,7 +20,7 @@ $router->get('/tes','TemplateController@tes');
 $router->post('/login','AuthController@login');
 $router->post('/register','AuthController@register');
 
-$router->group(['prefix'=>'checklists'],function($router){
+$router->group(['prefix'=>'checklists','middleware'=>'auth'],function($router){
     /**
      * TEMPLATES
      */

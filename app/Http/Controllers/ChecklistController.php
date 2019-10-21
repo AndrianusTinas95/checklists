@@ -74,13 +74,13 @@ class ChecklistController extends Controller
              * get checklist by id
              */
             $checklist = Checklist::find($id);
-            if(!$checklist) return $this->resp('error','Not Found',400);
+            if(!$checklist) return $this->resp('error','Not Found',404);
 
             /**
              * update checklist
              */
-
              $checklist->update($request->all());
+
             /**
              * data 
              */
@@ -89,7 +89,7 @@ class ChecklistController extends Controller
         } catch (Exception $e) {
             $type   = 'error'; 
             $data   = $e->getMessage();
-            $status = 200;
+            $status = 500;
         }
 
         return $this->resp($type ?? null, $data, $status);
@@ -103,11 +103,13 @@ class ChecklistController extends Controller
             /**
              * get checklist by id
              */
-            $checklist = Checklist::findOrFail($id);
-            return $this->resp('error','Not Found',400);
+            $checklist = Checklist::find($id);
+            if(!$checklist) return $this->resp('error','Not Found',404);
+            
             /**
-             * delete checklist
+             * delete checklist and item
              */
+            $checklist->template->items()->delete();
             $checklist->delete();
             $data   = ['message'=>'checklist success deleted'];
             $status = 204;
@@ -116,14 +118,13 @@ class ChecklistController extends Controller
              * if any arror reponse error message
              */
             $data   = $e->getMessage();
-            $status = 404;
+            $status = 500;
             $type   = 'error';
-        }finally{
-            /**
-             * response
-             */
-            return $this->resp($type ?? null,$data,$status);
         }
+        /**
+         * response
+         */
+        return $this->resp($type ?? null,$data,$status);
     }
 
     /**

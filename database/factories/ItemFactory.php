@@ -19,7 +19,7 @@ $factory->define(App\Item::class, function (Faker\Generator $faker) {
         'due'           => $faker->dateTime(),
         'urgency'       => rand(1,5),
         'updated_by'    => $faker->randomDigit,
-        'assignee_id'   => $faker->randomDigit,
-        'task_id'       => $faker->randomDigit,
+        // 'assignee_id'   => $faker->randomDigit,
+        // 'task_id'       => $faker->randomDigit,
     ];
 });

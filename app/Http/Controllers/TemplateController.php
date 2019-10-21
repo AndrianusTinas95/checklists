@@ -38,7 +38,7 @@ class TemplateController extends Controller
         ->where(function($q) use($request){
             if($request->filter) $q->where('name',$request->filter);
         })
-        ->paginate($request->page_limit ?? 10);
+        ->paginate($request->page_limit ?? 100);
         return response(new TemplateCollection($paginator));
     }
 
@@ -180,11 +180,13 @@ class TemplateController extends Controller
      */
     public function destroy($id){
         try {
-            $template = Template::findOrFail($id);
+            $template = Template::find($id);
+            if(!$template) return $this->resp('error','Not Found',404);
+
             $template->delete();
-            return response()->json(['message'=>'success'],204);
+            return $this->resp(null,['message'=>'success'],204);
         } catch (Exception $e) {
-            return response()->json($e->getMessage(),404);
+            return $this->resp('error',$e->getMessage(),500);
         }
 
     }
@@ -250,10 +252,10 @@ class TemplateController extends Controller
 
 
     public function tes(){
-     
-        $user = factory(User::class)->make()->toArray();
-        $user['password']='rahasia';
-        $user['password_confirm']='rahasia';
-        return $user;     
+        $items=Item::where('is_completed',true)->get();
+        $data['data'] = $items->random(0)->pluck('id')->map(function($item){
+            return ['item_id' => $item];
+        })->toArray();
+        return $data;
     }
 }

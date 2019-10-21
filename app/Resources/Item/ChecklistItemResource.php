@@ -26,7 +26,7 @@ class ChecklistItemResource extends JsonResource
                 'urgency'           => $this->urgency,
                 'updated_by'        => '',
                 'created_by'        => '',
-                'checklist_id'      => $this->template->checklist->id,
+                'checklist_id'      => $this->template->checklist->id ?? null,
                 'assignee_id'       => $this->assignee_id,
                 'task_id'           => $this->task_id,
                 'deleted_at'        => $this->deleted_at,
