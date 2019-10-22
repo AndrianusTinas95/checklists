@@ -10,9 +10,11 @@ use App\Resources\Item\CompleteItemChecklistResource;
 use App\Resources\Item\ItemChecklistResource;
 use App\Resources\Item\ItemCollection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ItemController extends Controller
 {
+    private $user;
     /**
      * Create a new controller instance.
      *
@@ -20,7 +22,7 @@ class ItemController extends Controller
      */
     public function __construct()
     {
-        //
+        $this->user = Auth::user();
     }
 
     /**
@@ -121,6 +123,7 @@ class ItemController extends Controller
         /**
          * save data item 
          */
+        $request['created_by'] = $this->user->id;
         $item = $checklist->template->items()->save(new Item($request->all()));
 
          /**
@@ -187,6 +190,7 @@ class ItemController extends Controller
         /**
          * update item 
          */
+        $request['updated_by'] = $this->user->id;
         $item->update($request->all());
 
         /**
@@ -205,7 +209,7 @@ class ItemController extends Controller
      * Delete checklist item by given {checklistId} and {itemId}
      */
     public function destroyChecklistItem($checklistId,$itemId){
-                /**
+        /**
          * get checklist  
          */
         $checklist = Checklist::find($checklistId);
@@ -252,10 +256,25 @@ class ItemController extends Controller
      * This endpoint will get all available items.
      */
     public function itemsList(Request $request){
+  
+        // $items= Item::where($request->filter)->get();
+        // dd($items);
+        // dd(array_keys($request->filter));
+        
         /**
          * get items limit 
          */
-        $items = Item::paginate($request->page['limit'] ?? 10);
+        $items = Item::where(function($q) use($request){
+                    if($request->filter) $q->where('name',$request->filter);
+                })
+                ->orderBy($request->sort ?? 'id', 'ASC')
+                ->paginate(
+                    $request->page_limit ?? 10,
+                    ['*'],
+                    'page_offset', 
+                    $request->page_offset ?? 1
+                );
+
         /**
          * collection items
          */

@@ -17,7 +17,7 @@ class ItemResource  extends JsonResource
         return [
             'id'                => (string)$this->id,
             'name'              => (string)$this->template->name,
-            'user_id'           => (string)$this->user_id,
+            'user_id'           => (string)$this->created_by,
             'is_completed'      => (bool)$this->is_completed,
             'due'               => $this->due,
             'urgency'           => $this->urgency,
@@ -26,7 +26,7 @@ class ItemResource  extends JsonResource
             'task_id'           => (string)$this->task_id,
             'completed_at'      => $this->completed_at,
             'last_update_by'    => $this->updated_by,
-            'update_at'         => $this->update_at,
+            'updated_at'        => $this->updated_at,
             'created_at'        => $this->created_at,
         ];
     }

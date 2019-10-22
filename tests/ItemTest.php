@@ -77,7 +77,7 @@ class ItemTest extends TestCase
                         "urgency",
                         "completed_at",
                         "last_update_by",
-                        "update_at",
+                        "updated_at",
                         "created_at",
                         "items" =>[
                             "*" =>[
@@ -92,7 +92,7 @@ class ItemTest extends TestCase
                                 "task_id",
                                 "completed_at",
                                 "last_update_by",
-                                "update_at",
+                                "updated_at",
                                 "created_at"
                             ]
                         ]
@@ -134,7 +134,7 @@ class ItemTest extends TestCase
                         "due",
                         "urgency",
                         "updated_by",
-                        "update_at",
+                        "updated_at",
                         "created_at",
                     ],
                     "links"=>[
@@ -170,7 +170,7 @@ class ItemTest extends TestCase
                     "assignee_id",
                     "task_id",
                     "deleted_at",
-                    "update_at",
+                    "updated_at",
                     "created_at",
                 ],
                 "links"=>[
@@ -216,7 +216,7 @@ class ItemTest extends TestCase
                     "assignee_id",
                     "task_id",
                     "deleted_at",
-                    "update_at",
+                    "updated_at",
                     "created_at",
                 ],
                 "links"=>[
@@ -255,7 +255,7 @@ class ItemTest extends TestCase
                         "assignee_id",
                         "task_id",
                         "deleted_at",
-                        "update_at",
+                        "updated_at",
                         "created_at",
                     ],
                     "links"=>[

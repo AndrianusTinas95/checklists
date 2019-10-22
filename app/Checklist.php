@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Checklist extends Model
 {
     protected $fillable = [
-        'object_domain','description','is_completed','completed_at','updated_by','due','urgency','object_id'
+        'object_domain','description','is_completed','completed_at','updated_by','created_by','due','urgency','object_id'
     ];
 
     /**

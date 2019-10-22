@@ -19,7 +19,9 @@ class DatabaseSeeder extends Seeder
         // $this->call('UsersTableSeeder');
         factory(User::class,10)->create();
         factory(Template::class,50)->create()->each(function($temp){
-            $temp->checklist()->save(factory(Checklist::class)->make());
+            $temp->checklist()->save(factory(Checklist::class)->make([
+                'created_by'    => User::find(1)->id
+            ]));
             $temp->items()->saveMany(factory(Item::class,rand(1,5))->make([
                 'assignee_id'   => $temp->id
             ]));

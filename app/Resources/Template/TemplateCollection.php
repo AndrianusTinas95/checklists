@@ -16,8 +16,8 @@ class TemplateCollection extends ResourceCollection
             'total' => $request->total()
         ];
         $this->links =[
-            'first' =>$request->path(),
-            'last'  =>$request->path() ."?page=". $request->lastPage(),
+            'first' =>$request->path() ."?page_offset=".$request->currentPage(),
+            'last'  =>$request->path() ."?page_offset=". $request->lastPage(),
             'next'  =>$request->nextPageUrl(),
             'prev'  =>$request->previousPageUrl() 
         ];

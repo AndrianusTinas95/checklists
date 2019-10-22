@@ -24,17 +24,17 @@ class ChecklistItemResource extends JsonResource
                 'completed_at'      => $this->completed_at,
                 'due'               => $this->due,
                 'urgency'           => $this->urgency,
-                'updated_by'        => '',
-                'created_by'        => '',
+                'updated_by'        => $this->updated_by,
+                'created_by'        => $this->created_by,
                 'checklist_id'      => $this->template->checklist->id ?? null,
                 'assignee_id'       => $this->assignee_id,
                 'task_id'           => $this->task_id,
                 'deleted_at'        => $this->deleted_at,
-                'update_at'         => $this->update_at,
+                'updated_at'         => $this->updated_at,
                 'created_at'        => $this->created_at,
             ],
             'links'         =>[
-                'self'      =>url('/checklists').'/'.$this->id
+                'self'      =>url('/checklists').'/'.$this->template->checklist->id.'/items/'.$this->id
             ] 
         
     ];

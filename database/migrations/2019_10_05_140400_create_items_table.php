@@ -21,8 +21,10 @@ class CreateItemsTable extends Migration
             $table->timestamp('due')->default(DB::raw('NULL'))->nullable();
             $table->smallInteger('urgency')->nullable();
             $table->integer('updated_by')->nullable();
+            $table->integer('created_by')->nullable();
             $table->integer('assignee_id')->nullable();
             $table->unsignedInteger('task_id')->nullable();
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('task_id')->references('id')->on('templates')->onDelete('cascade');

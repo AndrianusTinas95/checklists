@@ -16,7 +16,7 @@ class ChecklistItemStoreResource extends JsonResource
     {
 
         return [
-            'type'          => 'item',
+            'type'          => 'items',
             'id'            => (int)$this->id,
             'attributes'    => [
                 'description'       => $this->description,
@@ -24,8 +24,8 @@ class ChecklistItemStoreResource extends JsonResource
                 'completed_at'      => $this->completed_at,
                 'due'               => $this->due,
                 'urgency'           => $this->urgency,
-                'updated_by'        => '',
-                'update_at'         => $this->update_at,
+                'updated_by'        => $this->update_by,
+                'updated_at'         => $this->updated_at,
                 'created_at'        => $this->created_at,
             ],
             'links'         =>[

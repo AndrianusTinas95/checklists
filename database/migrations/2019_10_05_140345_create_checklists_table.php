@@ -20,6 +20,7 @@ class CreateChecklistsTable extends Migration
             $table->boolean('is_completed')->default(0);
             $table->timestamp('completed_at')->default(DB::raw('NULL'))->nullable();
             $table->integer('updated_by')->nullable();
+            $table->integer('created_by')->nullable();
             $table->timestamp('due')->default(DB::raw('NULL'))->nullable();
             $table->smallInteger('urgency')->nullable();
             $table->unsignedInteger('object_id')->nullable();

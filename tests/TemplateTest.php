@@ -103,6 +103,72 @@ class TemplateTest extends TestCase
 
     }
 
+    /**
+     * Assign bulk checklists template by given templateId to many domains
+     */
+    public function testTemplateAssigns(){
+        $id = Template::get()->random()->id;
+        $checklist = Checklist::get();
+        $data = $checklist->random(rand(0,count($checklist)))->pluck('object_domain','object_id')->map(function($item,$key){
+            return [
+                'attributes' => [
+                    'object_domain' => $item,
+                    'object_id' => $key,
+
+                ]
+            ];
+        })->flatten(1)->toArray();
+
+        $this->post('/checklists/templates/'.$id.'/assigns',$data,$this->header());
+        $this->seeStatusCode(200);
+        $this->seeJsonStructure([
+            "meta"  =>[
+                "count", "total"
+            ],
+            "data"  => [
+                "*" => [
+                    "type", "id",
+                    "attributes" =>[
+                        "object_domain",
+                        "object_id",
+                        "description",
+                        "is_completed",
+                        "due",
+                        "urgency",
+                        "completed_at",
+                        "updated_by",
+                        "created_by",
+                        "created_at",
+                        "updated_at",
+                    ],
+                    "links" =>[
+                        "self"
+                    ]
+                ]
+            ],
+            "included" => [
+                "*" => [
+                    "type", "id",
+                    "attributes"=>[
+                        "description",
+                        "is_completed",
+                        "due",
+                        "urgency",
+                        "updated_by",
+                        "user_id",
+                        "checklist_id",
+                        "deleted_at",
+                        "created_at",
+                        "updated_at",
+                    ],
+                    "links" =>[
+                        "self"
+                    ]
+                ]
+            ]
+        ]);
+    }
+
     public function dataTemplate(){
          /**
          * template data
@@ -146,7 +212,6 @@ class TemplateTest extends TestCase
     public function addTemplateJson(){
         $this->seeJsonStructure([
             "data"=> [
-                "id",
                 "attributes"=> [
                   "name",
                   "checklist"=> [

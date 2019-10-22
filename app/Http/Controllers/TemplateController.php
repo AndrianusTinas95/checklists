@@ -7,6 +7,7 @@ use App\Helpers\Carbon;
 use App\Item;
 use App\Resources\Item\ChecklistItemResource;
 use App\Resources\Item\ChecklistItemStoreResource;
+use App\Resources\Template\TemplateAssignCollection;
 use App\Resources\Template\TemplateCollection;
 use App\Resources\Template\TemplateResource;
 use App\Template;
@@ -14,6 +15,7 @@ use App\User;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 
 class TemplateController extends Controller
@@ -34,11 +36,35 @@ class TemplateController extends Controller
      * List all checklists templates
      */
     public function list(Request $request){
+        /**
+         * validate 
+         */
+        if($error = $this->listValidate($request,'templates','sort')) return $error;
+        if($error = $this->listValidate($request,'templates','fields')) return $error;
+        
+        if($request->fields){
+            $fields= explode(',',$request->fields);
+            array_push($fields,'id');
+            array_unique($fields);
+        }
+        /**
+         * get template
+         */
         $paginator = Template::with('checklist','items')
-        ->where(function($q) use($request){
-            if($request->filter) $q->where('name',$request->filter);
-        })
-        ->paginate($request->page_limit ?? 100);
+                    ->where(function($q) use($request){
+                        if($request->filter) $q->where('name',$request->filter);
+                    })
+                    ->orderBy($request->sort ?? 'id', 'ASC')
+                    ->paginate(
+                        $request->page_limit ?? 10,
+                        $request->fields ? $fields : ['*'],
+                        'page_offset', 
+                        $request->page_offset ?? 1
+                    );
+
+        /**
+         * response with collection
+         */
         return response(new TemplateCollection($paginator));
     }
 
@@ -184,7 +210,8 @@ class TemplateController extends Controller
             if(!$template) return $this->resp('error','Not Found',404);
 
             $template->delete();
-            return $this->resp(null,['message'=>'success'],204);
+            return $this->resp(null,['message'=>'success deleted'],204);
+
         } catch (Exception $e) {
             return $this->resp('error',$e->getMessage(),500);
         }
@@ -194,8 +221,41 @@ class TemplateController extends Controller
     /**
      * Assign bulk checklists template by given templateId to many domains
      */
-    public function assigns($id){
+    public function assigns(Request $request, $id){
+        /**
+         * get data checklist
+         */
+        // $queries = Template::with('checklist','items')
+        //     ->whereHas('checklist',function($q) use($request){
+        //         $q->whereIn(
+        //             'object_id',$request->input('*.attributes.object_id'),
+        //         )->whereIn(
+        //             'object_domain',$request->input('*.attributes.object_domain'),
+        //         );
+        //     })->find($id);
+        // dd($queries);
 
+        $queries = Checklist::with('template.items')->whereIn(
+            'object_id',$request->input('*.attributes.object_id'),
+        )->whereIn(
+            'object_domain',$request->input('*.attributes.object_domain'),
+        );
+
+        $checklists =$queries->get();
+        $items      =$queries->get()->pluck('template.items')->flatten();
+        $collection =collect([
+            'checklists'=>$checklists,
+            'items'     =>$items,
+        ]);
+        /**
+         * resource data 
+         */ 
+        $data = new TemplateAssignCollection($collection);
+
+        /**
+         * responser
+         */
+        return $this->resp(null,$data,200);
     }
 
     public function requestForm(Request $request){
@@ -244,7 +304,6 @@ class TemplateController extends Controller
     public function addDataRes($template){
         return [
             'data' => [
-                'id'            => $template->id,
                 'attributes'    => new TemplateResource($template)
             ]
         ];
@@ -252,10 +311,16 @@ class TemplateController extends Controller
 
 
     public function tes(){
-        $items=Item::where('is_completed',true)->get();
-        $data['data'] = $items->random(0)->pluck('id')->map(function($item){
-            return ['item_id' => $item];
-        })->toArray();
+        $checklist = Checklist::get();
+        $data = $checklist->random(rand(0,count($checklist)))->pluck('object_domain','object_id')->map(function($item,$key){
+            return [
+                'attributes' => [
+                    'object_domain' => $item,
+                    'object_id' => $key,
+
+                ]
+            ];
+        })->flatten(1);
         return $data;
     }
 }
