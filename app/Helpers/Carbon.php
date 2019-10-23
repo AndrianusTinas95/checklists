@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use DateTimeZone;
+use Exception;
 use Illuminate\Support\Carbon as IlluminateCarbon;
 
 class Carbon extends IlluminateCarbon
@@ -101,4 +103,16 @@ class Carbon extends IlluminateCarbon
                 break;
         }
     } 
+
+    public static function chConvertTz($time,$zone){
+        try {
+            $time = Carbon::parse($time,$zone);
+            $serverZone = new DateTimeZone('Asia/Jakarta');
+            $serverTime = $time->setTimezone($serverZone);
+
+        } catch (Exception $e) {
+            throw new Exception("Error Time Zone", 1);
+        }
+      return $serverTime;
+    }
 }

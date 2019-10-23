@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Checklist;
+use App\Helpers\Carbon;
 use App\Item;
 use App\Resources\Item\ChecklistItemResource;
 use App\Resources\Item\ChecklistItemStoreResource;
@@ -256,18 +257,47 @@ class ItemController extends Controller
      * This endpoint will get all available items.
      */
     public function itemsList(Request $request){
-  
-        // $items= Item::where($request->filter)->get();
-        // dd($items);
-        // dd(array_keys($request->filter));
-        
+        /**
+         * queries
+         */
+        $queries = new Item();
+
+        /**
+         * filter
+         */
+        if($request->filter){
+            $field      = array_keys($request->filter)[0];
+            $operator   = array_keys($request->filter[$field])[0];
+            if($operator=='between'){
+                $values     = $request->filter[$field][$operator];
+                $values     = explode(',',$values);
+
+                $from   = $values[0] < $values[1] ? $values[0] : $values[1];
+                $to     = $values[0] > $values[1] ? $values[0] : $values[1];
+
+                $from = Carbon::chConvertTz($from,$request->tz ?? env('APP_TIMEZONE'));
+                $to = Carbon::chConvertTz($to,$request->tz ?? env('APP_TIMEZONE'));
+                
+                $queries = $queries->where($field,'>=',$from)->where($field,'<=',$to);
+            }else{
+                $queries = $queries->where($request->filter);
+            }
+        }
+
+        $field_name=null;
+        if($request->sort){
+            $firstCharacter = substr($request->sort, 0, 1);
+            if($firstCharacter=='-'){
+                $field_name = ltrim($request->sort,'-');
+                $field_sort = 'DESC';
+            }
+
+        }
+
         /**
          * get items limit 
          */
-        $items = Item::where(function($q) use($request){
-                    if($request->filter) $q->where('name',$request->filter);
-                })
-                ->orderBy($request->sort ?? 'id', 'ASC')
+        $items = $queries->orderBy($field_name ? : ( $request->sort ?? 'id'), $field_sort ?? 'ASC')
                 ->paginate(
                     $request->page_limit ?? 10,
                     ['*'],
