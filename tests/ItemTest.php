@@ -111,14 +111,13 @@ class ItemTest extends TestCase
         $data = factory(Item::class)->make([
             'assignee_id'=>function(){
                 return Template::get()->random()->id;
-            },
-            'due'=>function(){
-                $date = new DateTime();
-                return $date->format('Y-m-d H:i:s');
-             }
+            }
         ])->only(
-            'description','due','urgency','assignee_id'
+            'description','urgency','assignee_id'
         );
+        $date = new DateTime();
+        $due = $date->format('Y-m-d H:i:s');
+        $data['due']=$due;
 
         $id = Checklist::pluck('id')->random();
         $this->post('/checklists'.'/'.$id.'/items',$data,$this->header());
@@ -189,14 +188,13 @@ class ItemTest extends TestCase
         $data = factory(Item::class)->make([
             'assignee_id'=>function() use($template){
                 return $template->id;
-            },
-            'due'=>function(){
-                $date = new DateTime();
-                return $date->format('Y-m-d H:i:s');
             }
         ])->only(
             'description','due','urgency','assignee_id'
         );
+        $date = new DateTime();
+        $due = $date->format('Y-m-d H:i:s');
+        $data['due']=$due;
         
         $this->patch('checklists/'.$checklistId.'/items'.'/'.$itemId,$data,$this->header());
         $this->seeStatusCode(200);

@@ -311,16 +311,17 @@ class TemplateController extends Controller
 
 
     public function tes(){
-        $checklist = Checklist::get();
-        $data = $checklist->random(rand(0,count($checklist)))->pluck('object_domain','object_id')->map(function($item,$key){
-            return [
-                'attributes' => [
-                    'object_domain' => $item,
-                    'object_id' => $key,
-
-                ]
-            ];
-        })->flatten(1);
+        $data = factory(Item::class)->make([
+            'assignee_id'=>function(){
+                return Template::get()->random()->id;
+            },
+            'due'=>function(){
+                $date = new DateTime();
+                return $date->format('Y-m-d H:i:s');
+             }
+        ])->only(
+            'description','due','urgency','assignee_id'
+        );
         return $data;
     }
 }
