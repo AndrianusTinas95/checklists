@@ -36,6 +36,14 @@ class ItemController extends Controller
         $ids = $this->inputComplate($request);
 
         /**
+         * complate item
+         */
+        $items = Item::whereIn('id',$ids)->update([
+            'is_completed'=>true,
+            'completed_at'=>Carbon::now()
+        ]);
+
+        /**
          * get items
          */
         $items = Item::with('template.checklist')
@@ -64,6 +72,14 @@ class ItemController extends Controller
          */
         $ids = $this->inputComplate($request);
 
+        /**
+         * incomplate item
+         */
+        $items = Item::whereIn('id',$ids)->update([
+            'is_completed'=>false,
+            'completed_at'=>Carbon::now()
+        ]);
+        
         /**
          * get items
          */
